@@ -1,0 +1,105 @@
+.dock {
+  position: fixed;
+  bottom: var(--space-6);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--z-top);
+
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  /* Always keep a gap from the screen edges so the pill reads as floating. */
+  max-width: calc(100vw - var(--space-8));
+
+  padding: var(--space-1-5) var(--space-2);
+  background: var(--color-glass-bg);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-lg);
+  /* Semi-transparent pill reads as glass only with the blur behind it. */
+  backdrop-filter: blur(var(--blur-glass));
+  -webkit-backdrop-filter: blur(var(--blur-glass));
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--space-10);
+  padding: 0 var(--space-3);
+  font-family: var(--font-display);
+  font-size: var(--text-base);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-tight);
+  color: var(--color-text);
+  text-decoration: none;
+  border-radius: var(--radius-full);
+  transition: background-color var(--duration-fast) var(--ease);
+}
+
+.brand:hover {
+  background: var(--color-surface-hover);
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--space-0-5);
+  list-style: none;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  height: var(--space-10);
+  padding: 0 var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-snug);
+  color: var(--color-text-2);
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: var(--radius-full);
+  transition:
+    color var(--duration-fast) var(--ease),
+    background-color var(--duration-fast) var(--ease);
+}
+
+.link:hover {
+  color: var(--color-text);
+  background: var(--color-surface-hover);
+}
+
+.link[aria-current='page'] {
+  color: var(--color-text);
+  background: var(--color-interactive-bg);
+}
+
+.brand:focus-visible,
+.link:focus-visible {
+  outline: 2px solid var(--color-interactive);
+  outline-offset: 2px;
+}
+
+.divider {
+  width: 1px;
+  height: var(--space-5);
+  background: var(--color-border);
+}
+
+@media (max-width: 480px) {
+  .dock {
+    gap: var(--space-1);
+    padding: var(--space-1) var(--space-1-5);
+  }
+
+  /* Drop the wordmark on phones — space is tight and Work already links home. */
+  .brand,
+  .divider {
+    display: none;
+  }
+
+  .link {
+    padding: 0 var(--space-3);
+  }
+}
