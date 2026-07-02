@@ -10,7 +10,7 @@ Read this file at the start of EVERY session. No exceptions.
 - Framework: Next.js 16 App Router
 - Styling: CSS Modules + CSS Custom Properties only
 - No Tailwind, no inline styles, no styled-components
-- Fonts: next/font/google — Libre_Baskerville + Inter
+- Fonts: next/font/google — Geist (display + body) + Geist Mono
 
 ## Design system rules — MANDATORY
 

@@ -1,6 +1,6 @@
 .dock {
   position: fixed;
-  bottom: var(--space-6);
+  top: var(--space-6);
   left: 50%;
   transform: translateX(-50%);
   z-index: var(--z-top);

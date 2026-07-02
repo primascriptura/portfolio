@@ -76,3 +76,93 @@ margins, wordmark dropped). No console errors.
 Build the Home hero + featured-work section: positioning line (Identity.md
 Variant B, trimmed) + 3 case cards (Kiite / Metatable / SignFlow), each with an
 outcome one-liner. This turns Home into the real Work index the dock points to.
+
+---
+
+## Session 3 — Font decision: Geist + Geist Mono (2026-07-02)
+
+### What was built
+- Built a standalone comparison tool at `font-lab/index.html` (outside `src/`,
+  not part of the Next build) — a realistic case-study specimen page (styled
+  with the real design tokens) plus a floating tweak panel to switch between
+  three candidate pairings live: Satoshi; Inter + Libre Baskerville Regular
+  Italic; Geist + Geist Mono. Served via a `font-lab` entry in
+  `~/.claude/launch.json` (python `http.server`).
+- **Decision: Geist + Geist Mono**, applied to the real site:
+  - `src/app/layout.tsx` — swapped `Libre_Baskerville` + `Inter` for `Geist`
+    + `Geist_Mono` (both from `next/font/google`; confirmed available in this
+    Next 16.2.9 install). Loader `variable` names reused as-is
+    (`--font-body`, `--font-mono`) so no downstream CSS needed to change names.
+  - `src/design-system/tokens.css` — `--font-body: 'Geist', system-ui,
+    sans-serif`; `--font-display` now just aliases `var(--font-body)` (no
+    separate display face — Geist covers both roles); `--font-mono: 'Geist
+    Mono', 'Courier New', monospace` (was JetBrains Mono).
+  - `CLAUDE.md` stack rule updated to match.
+- Verified: `tsc --noEmit` clean; `next/font/google` font-data confirmed
+  `Geist`/`Geist Mono` present; the already-running dev server (another
+  session, port 3100) hot-reloaded on save — confirmed via curl that
+  `<body>` now carries the Geist/Geist Mono variable classes, HTTP 200, no
+  compile errors.
+
+### Key decisions
+- **One family for display + body, mono reserved for numerals/labels.**
+  Geist Mono is scoped to eyebrows, meta labels (ROLE/TEAM/TIMELINE/STACK),
+  and stat numbers — not general UI text. Matches the Claude Code /
+  build-in-public positioning better than an editorial serif accent.
+- **`--font-display` aliases `--font-body`** instead of loading Geist twice
+  under two variable names — same font file, avoids a duplicate font request.
+
+### Exact next step (1 action, max 2h)
+Build the Home hero + featured-work section (see Session 2's next step —
+still the actual next build task; this session was a font decision only).
+
+### Cleanup (same session)
+Deleted `font-lab/` now that Geist + Geist Mono is locked in and applied —
+its job was done, keeping it around would just be a stray comparison tool
+sitting in the repo. Removed its `font-lab` entry from `~/.claude/launch.json`
+too.
+
+---
+
+## Session 4 — Nav to top + real Home (hero + featured work) (2026-07-02)
+
+### What was built
+- **Dock repositioned**: `src/design-system/components/Dock.module.css` —
+  `bottom` swapped for `top` (same floating glass pill, same component,
+  just anchored to the top of the viewport instead of the bottom).
+- **Explored two Home concepts** as throwaway routes (`/concepts/work-led`,
+  `/concepts/masthead`) to compare a narrow single-column layout against a
+  bolder asymmetric "magazine" layout before committing either to the real
+  page. Masthead was rejected on sight (didn't land visually) and deleted.
+  `work-led` became the base for the real Home, then the `/concepts` route
+  itself was deleted once merged — no leftover scaffolding.
+- **`src/content/featured-work.ts`** — new shared data source (title, deck,
+  description, outcome, meta per case) for Kiite, Metatable, SignFlow, based
+  on Project-Audit.md facts. Feeds the Home cards now; will feed
+  `/work/[slug]` later.
+- **`src/app/page.tsx` + `page.module.css`** rebuilt from the bare
+  wordmark-only placeholder into the real Home: trimmed Identity.md
+  positioning line as the H1 (left-aligned, narrow `--max-w-text` column —
+  jakub.kr-width, not full-bleed), a "Selected work" eyebrow + the 3 case
+  cards (bordered, hover lift), a short "How I ship" coda (2-3 slash-command
+  style lines reinforcing the Claude-Code-not-Figma positioning, kept
+  generic/truthful rather than quoting invented per-project prompts), and a
+  quiet closing line linking to About.
+- Verified in-browser: light/dark, desktop (1400px) and mobile (375px), no
+  console errors, Dock doesn't overlap content at either anchor.
+
+### Key decisions
+- **Dock stays exactly as-is on Home** (no scroll-aware hiding, no "navless"
+  jakub.kr treatment) — the site has real sub-pages jakub.kr doesn't, so
+  wayfinding stays available everywhere, including Home.
+- **Narrow single column, not a 3-up grid** — cards stack full-width in a
+  ~640px column per Igor's explicit ask to match jakub.kr's reading width.
+- **No fabricated project imagery or prompts** — no real Kiite/Metatable/
+  SignFlow screenshots exist yet, so cards stay text-only rather than faking
+  placeholder visuals; the "How I ship" coda states general practice, not
+  invented project-specific prompt transcripts.
+
+### Exact next step (1 action, max 2h)
+Build `/work/[slug]` case study pages (currently `return null` stubs) using
+`featured-work.ts` as the index data and the real Design Teleport case-study
+text as the long-form source to adapt.

@@ -1,21 +1,19 @@
 import type { Metadata } from 'next';
-import { Libre_Baskerville, Inter } from 'next/font/google';
+import { Geist, Geist_Mono } from 'next/font/google';
 import '@/styles/globals.css';
 import { Providers } from './providers';
 import { Dock } from '@/design-system/components';
 
-const libreBaskerville = Libre_Baskerville({
-  subsets: ['latin'],
-  weight: ['400', '700'],
-  style: ['normal', 'italic'],
-  display: 'swap',
-  variable: '--font-display',
-});
-
-const inter = Inter({
+const geist = Geist({
   subsets: ['latin'],
   display: 'swap',
   variable: '--font-body',
+});
+
+const geistMono = Geist_Mono({
+  subsets: ['latin'],
+  display: 'swap',
+  variable: '--font-mono',
 });
 
 export const metadata: Metadata = {
@@ -31,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${libreBaskerville.variable} ${inter.variable}`}>
+      <body className={`${geist.variable} ${geistMono.variable}`}>
         <Providers>
           {children}
           <Dock />
