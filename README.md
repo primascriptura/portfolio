@@ -1,6 +1,6 @@
-# Ihor Chivrich — Portfolio
+# Ihor Khivrych — Portfolio
 
-Personal portfolio site for Ihor Chivrich, product designer specialising in fintech, SaaS, and AI startups.
+Personal portfolio site for Ihor Khivrych, product designer specialising in fintech, SaaS, and AI startups.
 
 **Live:** https://portfolio-xi-jade-9ts58sbz9e.vercel.app
 
