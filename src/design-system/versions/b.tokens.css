@@ -1,0 +1,11 @@
+/* ============================================================
+   VERSION B — token overrides
+   Direction: jkane.co layout and clean grid.
+   Placeholder values below only prove the [data-version] scoping
+   mechanism — replace once Version B's real direction is designed.
+   Reassign existing tokens only — never introduce raw values here.
+   ============================================================ */
+
+[data-version='b'] {
+  --max-w-text: var(--max-w-content);
+}

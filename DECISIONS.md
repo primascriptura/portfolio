@@ -166,3 +166,136 @@ too.
 Build `/work/[slug]` case study pages (currently `return null` stubs) using
 `featured-work.ts` as the index data and the real Design Teleport case-study
 text as the long-form source to adapt.
+
+---
+
+## Session 5 — Parallel A/B prototype architecture (2026-07-07)
+
+### What was built
+- **Live site moved into a route group**: `src/app/page.tsx`, `about/`,
+  `work/`, `playground/` → `src/app/(site)/` via `git mv` (route groups
+  don't add a URL segment, so `/`, `/about`, `/work`, `/playground` are
+  unchanged). New `(site)/layout.tsx` owns `<Dock />`, which moved out of
+  root `layout.tsx`. Root layout is now a pure shell: html, fonts,
+  Providers, globals import — no chrome.
+- **Two parallel prototype route trees**: `src/app/(prototypes)/a/` and
+  `.../b/`, real URL segments (`/a`, `/b`) so they can never collide with
+  each other or with `(site)`. Each has its own `layout.tsx` that wraps
+  children in `<div data-version="a|b">` and mounts a version-specific
+  `Nav`. Route shape mirrors the live site (`page`, `about`, `work`,
+  `work/[slug]`, `playground`, `playground/[slug]`) so nothing 404s.
+- **Token isolation via `data-version` attribute** — the same mechanism
+  already used for `data-theme`. `src/design-system/versions/a.tokens.css`
+  and `b.tokens.css`, scoped `[data-version='a'] { }` / `[data-version='b']`,
+  both always imported in `globals.css` alongside base `tokens.css`.
+  Placeholder overrides only (A: display font → mono, tighter tracking;
+  B: wider text column) — real values land once each direction is
+  actually designed.
+- **Version-specific Nav components**: `design-system/version-a/Nav.tsx`
+  (top-left corner cluster, plain text, no pill — nod to itsmarga.me's
+  unconventional placement) and `version-b/Nav.tsx` (full-width sticky
+  bar with a bottom rule — nod to jkane.co's clean grid). Both reuse the
+  shared `ThemeToggle`. Structurally distinct from each other and from
+  the live site's `Dock` so isolation is visible, not just declared.
+- Both `/a` and `/b` Home pages pull from the shared `featuredWork` data
+  (`src/content/featured-work.ts`) — content stays single-sourced;
+  only the shell/nav/layout differs between versions.
+- `CLAUDE.md` and `README.md` updated: documented the `(site)` /
+  `(prototypes)` split, the `versions/*.tokens.css` exception to the
+  "no new CSS variables outside tokens.css" rule, and the exit strategy.
+
+### Key decisions
+- **Real URL segments, not bare route groups.** `(a)`/`(b)` as route
+  groups alone would both resolve to `/work` — silent collision. `/a`
+  and `/b` as real segments make collision structurally impossible.
+- **`data-version` mirrors `data-theme` exactly.** Same attribute-scoping
+  mechanism the codebase already trusts for theming, extended one level.
+  No new pattern to learn, no risk of one version's tokens leaking into
+  another even though all CSS ships in one bundle.
+- **Content stays shared, shell forks.** Only the presentation layer
+  (nav, layout, type/color overrides) is duplicated per version; MDX
+  case studies and `featured-work.ts` are not. Reduces what has to be
+  kept in sync while the two directions are being compared.
+- **Placeholder token overrides, not real art direction.** This session
+  scaffolds the mechanism only — halftone textures, the vshslv.com hero
+  device, and jkane.co's actual grid proportions are separate, later
+  design work, not implied by this architecture pass.
+
+### Verified
+Dev server (Turbopack). Checked: `/`, `/about`, `/work`, `/playground`
+(live site, unchanged behavior, Dock still floating/centered) and `/a`,
+`/b` (own nav, own token overrides visibly applied, no bleed into each
+other or into the live site), light/dark theme on all of them, mobile
+375px. No console errors.
+
+### Exact next step (1 action, max 2h)
+Pick up Session 4's still-open task — build `/work/[slug]` case studies
+on the live site — OR start real art direction for Version A's hero
+(vshslv.com-style signature device) now that it has a route to live in.
+
+---
+
+## Session 5 — Version A homepage: desktop-OS entrance (2026-07-07)
+
+### What was built
+- Version A `/a` home is now a simulated desktop OS (Generate-stage first draft),
+  mirroring the edoardolunardi.dev composition: persistent full-width top bar,
+  left finder-style file list, floating windows, bottom work-gallery dock, all
+  over a cursor-reactive monospace-halftone background.
+- New components under `design-system/version-a/`:
+  - `TopBar.tsx` — full-width sticky chrome. Wordmark (name) left, real Primary
+    nav center (Work/Playground/About → the actual routes), ThemeToggle + live
+    mono clock right. **Replaces** the old corner `Nav` (Nav.tsx/.module.css
+    deleted — no leftover scaffolding).
+  - `ReactiveBackground.tsx` — canvas halftone of mono glyphs. Slow ambient
+    sine-drift; local brightening near the cursor with quadratic falloff;
+    theme-aware (reads `--color-text`/`--color-accent` off live elements);
+    `prefers-reduced-motion` → single static frame, no loop, no cursor tracking;
+    `pointer-events:none` so clicks pass through; skips sub-threshold cells to
+    hold frame rate.
+  - `Desktop.tsx` — window manager: openable/closable/focusable/draggable
+    windows (About pre-opened so the 3-second read needs no click), z-order
+    focus, Esc closes front-most and returns focus to its file button, cascade
+    default layout, collapsible work-gallery dock (collapses to a reopen tab —
+    never fully hidden).
+  - `desktop-content.ts` — view-model composing EXISTING content only
+    (`featured-work.ts` + site bio); no new content system, no invented sections.
+- Tokens: added `--color-accent`/`--color-accent-hover` (light+dark) and
+  `--topbar-h` to `tokens.css`; `a.tokens.css` reassigns `--color-interactive`
+  to the accent so the one chromatic color is used strictly for
+  interactive/active states in Version A only. Live site stays achromatic.
+
+### Key decisions
+- **Theme-aware, not force-dark.** The brief wants a dark foundation, but
+  CLAUDE.md requires both themes work. Resolved by driving everything off
+  semantic tokens — dark theme gives the intended hero look, light stays valid.
+- **Nav must survive at every width.** The TopBar nav is the real, crawlable,
+  no-JS route path to every section, so it is NOT hidden on mobile (only the
+  clock is dropped). Files/windows are the OS layer; nav + dock are the escape
+  hatches, satisfying "reachable in ≤2 clicks" and the JS-off fallback.
+- **Accent added to tokens.css, opted-in per version.** The monochromatic
+  system stays intact for the live site; Version A opts in via existing
+  reassign-only override discipline.
+- **Files = buttons, work/dock = real links.** File entries open in-page
+  windows (real `<button>`, Enter/Space/Esc); case studies are real `<Link>`s
+  in both the Selected Work window and the dock.
+
+### Verified
+- `tsc --noEmit`: no errors in project source (only a stale `.next/types`
+  validator line about a nonexistent root page — generated noise, not ours).
+- `eslint` on all new files: clean.
+- Live dev server (another chat's, watching this folder) recompiled cleanly
+  (`✓ Compiled`, no errors); `GET /a` → 200; SSR HTML contains the
+  `data-version="a"` shell, Primary nav, all three files, the pre-opened About
+  window (labelled, bio present), and the Work Gallery dock with Kiite /
+  Metatable / SignFlow as real links.
+- **NOT verified (environment blocker):** could not capture a screenshot or run
+  the live keyboard/reduced-motion pass — the preview harness is hard-mapped to
+  the port another chat's dev server holds, and the Chrome extension was
+  disconnected this session. Visual + interaction QA still owed.
+
+### Exact next step (1 action, max 2h)
+Open `/a` in a real browser: screenshot at desktop width vs the reference for
+structural fidelity, tab through keyboard-only (every file + nav item operable,
+Esc closes windows), and toggle reduced-motion to confirm the background
+degrades to a static frame. Fix any drift found — this is the owed audit pass.

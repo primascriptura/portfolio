@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import '@/styles/globals.css';
 import { Providers } from './providers';
-import { Dock } from '@/design-system/components';
 
 const geist = Geist({
   subsets: ['latin'],
@@ -30,10 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geist.variable} ${geistMono.variable}`}>
-        <Providers>
-          {children}
-          <Dock />
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );

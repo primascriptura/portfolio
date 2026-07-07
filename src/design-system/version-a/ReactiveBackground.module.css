@@ -1,0 +1,19 @@
+/* Full-bleed texture layer. Solid token bg means no unstyled flash before
+   the canvas paints. pointer-events: none so every click passes through to
+   the UI above. `color` seeds the glyph tint the canvas reads at runtime. */
+.layer {
+  position: absolute;
+  inset: 0;
+  z-index: var(--z-base);
+  overflow: hidden;
+  background: var(--color-bg);
+  pointer-events: none;
+}
+
+.canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  color: var(--color-text);
+}

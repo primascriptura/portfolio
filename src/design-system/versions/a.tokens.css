@@ -1,0 +1,18 @@
+/* ============================================================
+   VERSION A — token overrides
+   Direction: a simulated desktop-OS entrance. Technical mono chrome,
+   a dark-capable neutral foundation, and one restrained warm accent
+   reserved strictly for interactive / active states.
+   Reassign existing tokens only — never introduce a raw value here.
+   ============================================================ */
+
+[data-version='a'] {
+  /* Chrome (bar, file labels, window titles, clock) speaks monospace. */
+  --font-display: var(--font-mono);
+  --tracking-tight: var(--tracking-tightest);
+
+  /* Opt this version into the accent for every interactive/active state.
+     Body content still uses the neutral text tokens + --font-body. */
+  --color-interactive: var(--color-accent);
+  --color-interactive-hover: var(--color-accent-hover);
+}

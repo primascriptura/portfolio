@@ -42,6 +42,12 @@
   --color-interactive-bg:      var(--neutral-100);
   --color-interactive-bg-hover: var(--neutral-200);
 
+  /* Accent — the one chromatic exception. The live site stays achromatic;
+     Version A opts in (see versions/a.tokens.css) for its bold OS-desktop
+     entrance, using accent ONLY for interactive/active states. Warm red. */
+  --color-accent:        oklch(0.585 0.196 34);
+  --color-accent-hover:  oklch(0.520 0.196 34);
+
   /* ── Typography ─────────────────────────────────────────── */
   /* Body/mono loaded via next/font on <body> — these are fallbacks. */
   /* Display shares the body face (Geist) — no separate serif accent. */
@@ -109,6 +115,9 @@
   --max-w-wide:    1120px;
   --max-w-site:    1440px;
 
+  /* Persistent chrome */
+  --topbar-h:      var(--space-12);
+
   /* ── Border radius ──────────────────────────────────────── */
   --radius-xs:   2px;
   --radius-sm:   4px;
@@ -163,6 +172,10 @@
   --color-interactive-hover:    var(--neutral-200);
   --color-interactive-bg:       oklch(0.200 0 0);
   --color-interactive-bg-hover: oklch(0.260 0 0);
+
+  /* Accent — brighter on the dark foundation so it reads without shouting. */
+  --color-accent:        oklch(0.705 0.185 38);
+  --color-accent-hover:  oklch(0.760 0.170 42);
 
   --shadow-xs: 0 1px 2px oklch(0 0 0 / 0.30);
   --shadow-sm: 0 2px 6px oklch(0 0 0 / 0.40), 0 1px 2px oklch(0 0 0 / 0.25);
