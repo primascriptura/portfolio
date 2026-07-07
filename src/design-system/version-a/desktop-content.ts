@@ -10,10 +10,10 @@ export { featuredWork };
 /* Real routes that already exist under /a — every file below maps to one,
    so the OS metaphor never becomes the only path to a section. */
 export const PROFILE = {
-  name: 'Ihor Chivrich',
+  name: 'Ihor Khivrych',
   role: 'Product Designer',
   bio: [
-    'I’m Ihor Chivrich, a product designer working with fintech, SaaS, and AI startups.',
+    'I’m Ihor Khivrych, a product designer working with fintech, SaaS, and AI startups.',
     'I design and ship — research, UX, UI, and increasingly the code itself. Selected work is in the dock below; open a file to look around.',
   ],
   availability: 'Available for select freelance work.',

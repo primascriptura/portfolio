@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Ihor Chivrich — Product Designer',
+  title: 'Ihor Khivrych — Product Designer',
   description:
     'Product designer for fintech, SaaS, and AI startups. I design and ship — research, UX, UI, and increasingly the code itself.',
 };

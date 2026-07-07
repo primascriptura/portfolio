@@ -24,7 +24,7 @@ export function Nav() {
   return (
     <header className={styles.bar}>
       <Link href="/b" className={styles.brand} aria-label="Home">
-        Ihor Chivrich
+        Ihor Khivrych
       </Link>
 
       <nav aria-label="Primary">
