@@ -50,12 +50,25 @@ export interface WindowLayout {
   w: number;
 }
 
+/* Kept clear of the file list (top-left, ~256px wide, ~170px tall) and
+   spread apart from one another so the two pre-opened windows never start
+   stacked on load — see Decisions.md, window-overlap fix. */
 export const DEFAULT_LAYOUT: Record<WindowId, WindowLayout> = {
-  about: { x: 34, y: 24, w: 384 },
-  work: { x: 452, y: 96, w: 432 },
-  playground: { x: 470, y: 120, w: 384 },
+  about: { x: 288, y: 96, w: 384 },
+  work: { x: 704, y: 156, w: 400 },
+  playground: { x: 460, y: 460, w: 380 },
 };
 
 /* Which windows are open on first paint, back-to-front. About is pre-opened
-   so the 3-second read needs no click. */
+   so the 3-second read needs no click; deterministic for SSR. Desktop
+   viewports additionally auto-open Selected Work client-side (see
+   Desktop.tsx) so the canvas reads as an active desktop rather than an
+   empty one — mobile stays single-sheet so About is never buried under a
+   second full-screen window with no way back to the file list. */
 export const INITIAL_OPEN: WindowId[] = ['about'];
+
+/** Min viewport width for the Selected Work auto-open, mirrored from the
+ * `sm`→desktop switch this file already uses (Desktop.module.css `.desktop`
+ * drops the mobile sheet layout above 640px, but windows need real room to
+ * sit side by side, hence the wider gate here). */
+export const AUTO_OPEN_MIN_WIDTH = 1024;

@@ -8,12 +8,14 @@
 }
 
 /* ── File list (the real menu) ──────────────────────────────────────────
-   Finder-style stack, top-left, mono chrome. */
+   Finder-style stack, top-left, mono chrome. Desktop-icon semantics: it
+   sits BEHIND every floating window (z-base, not z-raised) so an open
+   window never fights it for the same pixels — see window-overlap fix. */
 .fileList {
   position: absolute;
   top: var(--space-6);
   left: var(--space-6);
-  z-index: var(--z-raised);
+  z-index: var(--z-base);
 
   display: flex;
   flex-direction: column;
@@ -77,16 +79,17 @@
   color: var(--color-text-3);
 }
 
-/* ── Floating window ────────────────────────────────────────────────────*/
+/* ── Floating window ────────────────────────────────────────────────────
+   Flat, not glass: solid panel + hairline border, no drop shadow. Depth
+   comes from z-order and the focused border color, not elevation. */
 .window {
   position: absolute;
   display: flex;
   flex-direction: column;
   max-height: calc(100dvh - var(--topbar-h) - var(--space-16));
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   background: var(--color-bg-elevated);
-  box-shadow: var(--shadow-md);
   overflow: hidden;
   animation: window-in var(--duration-normal) var(--ease);
 }
@@ -110,12 +113,10 @@
 
 .window.focused {
   border-color: var(--color-interactive);
-  box-shadow: var(--shadow-lg);
 }
 
 .window.dragging {
   cursor: grabbing;
-  box-shadow: var(--shadow-lg);
 }
 
 .window:focus-visible {
@@ -128,7 +129,7 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  padding: var(--space-2) var(--space-2) var(--space-2) var(--space-3);
+  padding: var(--space-1-5) var(--space-1-5) var(--space-1-5) var(--space-3);
   border-bottom: 1px solid var(--color-border);
   cursor: grab;
   user-select: none;
@@ -146,30 +147,35 @@
   color: var(--color-text-2);
 }
 
+/* Filled monochrome circle, icon in the inverse color — the reference's
+   window-control shape — rather than a hover-pill icon button. */
 .close {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: var(--space-6);
-  height: var(--space-6);
+  flex-shrink: 0;
+  width: var(--space-5);
+  height: var(--space-5);
   padding: 0;
-  color: var(--color-text-3);
-  background: transparent;
-  border: none;
-  border-radius: var(--radius-sm);
+  color: var(--color-bg);
+  background: var(--color-text-3);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
   cursor: pointer;
   transition:
     color var(--duration-fast) var(--ease),
-    background-color var(--duration-fast) var(--ease);
+    background-color var(--duration-fast) var(--ease),
+    border-color var(--duration-fast) var(--ease);
 }
 
 .close:hover {
   color: var(--color-interactive);
-  background: var(--color-surface-hover);
+  background: transparent;
+  border-color: var(--color-interactive);
 }
 
 .windowBody {
-  padding: var(--space-5);
+  padding: var(--space-4);
   overflow-y: auto;
 }
 
@@ -272,9 +278,7 @@
   z-index: var(--z-overlay);
 
   border-top: 1px solid var(--color-border);
-  background: var(--color-glass-bg);
-  backdrop-filter: blur(var(--blur-glass));
-  -webkit-backdrop-filter: blur(var(--blur-glass));
+  background: var(--color-bg-elevated);
 }
 
 .dockBar {
@@ -354,12 +358,10 @@
   letter-spacing: var(--tracking-wide);
   text-transform: uppercase;
   color: var(--color-text-2);
-  background: var(--color-glass-bg);
+  background: var(--color-bg-elevated);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
   cursor: pointer;
-  backdrop-filter: blur(var(--blur-glass));
-  -webkit-backdrop-filter: blur(var(--blur-glass));
   transition:
     color var(--duration-fast) var(--ease),
     border-color var(--duration-fast) var(--ease);
@@ -432,10 +434,6 @@
     }
   }
 
-  .window.focused {
-    box-shadow: none;
-  }
-
   .titlebar {
     cursor: default;
     padding: var(--space-3) var(--space-2) var(--space-3) var(--space-4);
@@ -447,8 +445,6 @@
     position: static;
     margin-top: auto;
     background: transparent;
-    backdrop-filter: none;
-    -webkit-backdrop-filter: none;
     border-top: none;
   }
 

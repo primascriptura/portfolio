@@ -299,3 +299,73 @@ Open `/a` in a real browser: screenshot at desktop width vs the reference for
 structural fidelity, tab through keyboard-only (every file + nav item operable,
 Esc closes windows), and toggle reduced-motion to confirm the background
 degrades to a static frame. Fix any drift found — this is the owed audit pass.
+
+---
+
+## Session 6 — Version A: fix window-overlap bug, dark-only, closer to reference (2026-07-08)
+
+### What was built
+- **Fixed the on-load window-overlap bug.** Root cause: `DEFAULT_LAYOUT.about`
+  (x:34,y:24) sat directly on top of the file list (also top:24,left:24), and
+  `.fileList` had a *higher* z-index (`--z-raised`) than the window layer
+  (`i+1`, starting at 1) — so the file list's own labels painted over the About
+  window's text every time, reading as garbled/overlapping content.
+  `src/design-system/version-a/Desktop.module.css`: `.fileList` z-index dropped
+  to `--z-base` (desktop-icon semantics: behind every window, not above).
+  `desktop-content.ts`: `DEFAULT_LAYOUT` repositioned so About/Selected
+  Work/Playground clear the file list and each other on first paint.
+- **Version A is dark-only now — reversed Session 5's "theme-aware, not
+  force-dark" decision.** The reactive background was unreadable against the
+  light theme's surface and borderline invisible against the default dark
+  values; splitting the difference served neither. `versions/a.tokens.css` now
+  reassigns the core color tokens to tokens.css's own `[data-theme="dark"]`
+  values (no new values invented), and `TopBar.tsx` no longer renders
+  `ThemeToggle` for this version — there is nothing to toggle.
+- **Reactive background recalibrated** for the one (dark) background it now
+  has to work against: `CELL` 18→16, `BASE_ALPHA` 0.16→0.3, idle-field
+  multiplier 0.55→0.7, `CURSOR_ALPHA` 0.5→0.62, `DRAW_THRESHOLD` 0.14→0.1.
+- **Closer visual match to edoardolunardi.dev**, based on reading its actual
+  production HTML/CSS/JS (three.js dither shader, flat two-tone chrome, no
+  blur/shadow anywhere, hairline `ring`-style borders, circular filled window
+  controls): dropped `box-shadow`/`backdrop-filter`/glass tokens from the
+  window, top bar, and dock (`Desktop.module.css`, `TopBar.module.css`) in
+  favor of solid `--color-bg-elevated` panels + 1px borders; `.close` restyled
+  from a hover-pill icon button to a small filled circle (inverse fill,
+  outlines on hover) matching the reference's `WindowControl` shape; tightened
+  titlebar and window-body padding.
+- **Selected Work now auto-opens alongside About** on desktop-width viewports
+  only (`AUTO_OPEN_MIN_WIDTH = 1024`, mirrors the reference's own
+  `useBreakpoint('lg')`-gated auto-open), so the canvas reads as an active,
+  populated desktop like the reference on first load. Mobile intentionally
+  stays single-window (About only) — two stacked full-screen sheets would
+  bury About with no way back to the file list, since the sheet layout hides
+  the file list entirely while any window is open.
+
+### Key decisions
+- **File list is a desktop icon, not a menu bar** — it must render *behind*
+  open windows, never fight them for the same pixels. This is the actual fix;
+  the repositioned default layout is defense-in-depth on top of it.
+- **Dark-only for Version A specifically, not site-wide.** This is a per-version
+  override (`[data-version='a']`), not a change to `tokens.css` or the live
+  site — the achromatic light/dark site keeps both themes.
+- **Auto-open gated by viewport width, not a static `INITIAL_OPEN` array** —
+  a naive `INITIAL_OPEN = ['about','work']` looked right on desktop but broke
+  mobile (both windows use the same `position:fixed` full-screen sheet at
+  ≤640px, so the second one completely hides the first with no visible way to
+  close it). Ported the reference's own breakpoint-gated pattern instead.
+
+### Verified
+Dev server (Turbopack, :3100), `/a` at desktop (1280×800) and mobile
+(375×812), both forced dark regardless of `prefers-color-scheme`. Confirmed
+in-browser: no window/file-list overlap on cold load, About + Selected Work
+both open cleanly on desktop, About-only on mobile, background texture
+visibly present (previously near-invisible), `box-shadow: none` on windows
+via computed-style inspection, `tsc --noEmit` and `eslint` clean on all
+touched files (pre-existing `.next/types/validator.ts` error is unrelated
+generated noise, per Session 5's note).
+
+### Exact next step (1 action, max 2h)
+Keyboard-only + reduced-motion pass (still owed from Session 5): tab through
+every file/nav item, confirm Esc closes the front-most window and returns
+focus correctly, and confirm `prefers-reduced-motion` degrades the background
+to a static frame with the new alpha/density constants.

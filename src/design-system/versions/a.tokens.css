@@ -1,7 +1,7 @@
 /* ============================================================
    VERSION A — token overrides
    Direction: a simulated desktop-OS entrance. Technical mono chrome,
-   a dark-capable neutral foundation, and one restrained warm accent
+   a dark-only neutral foundation, and one restrained warm accent
    reserved strictly for interactive / active states.
    Reassign existing tokens only — never introduce a raw value here.
    ============================================================ */
@@ -10,6 +10,26 @@
   /* Chrome (bar, file labels, window titles, clock) speaks monospace. */
   --font-display: var(--font-mono);
   --tracking-tight: var(--tracking-tightest);
+
+  /* Dark-only: the reactive background reads badly against the light
+     surface and this direction is explicitly a terminal/OS pastiche, so
+     Version A never resolves to the light theme regardless of the
+     visitor's system preference. Values mirror tokens.css's own
+     [data-theme="dark"] block one-for-one — no new values introduced. */
+  --color-bg:              var(--neutral-950);
+  --color-bg-elevated:     var(--neutral-900);
+  --color-surface:         oklch(0.163 0 0);
+  --color-surface-hover:   var(--neutral-800);
+  --color-border:          oklch(0.230 0 0);
+  --color-border-strong:   var(--neutral-700);
+
+  --color-text:            var(--neutral-25);
+  --color-text-2:          var(--neutral-400);
+  --color-text-3:          var(--neutral-600);
+  --color-text-disabled:   var(--neutral-700);
+
+  --color-accent:        oklch(0.705 0.185 38);
+  --color-accent-hover:  oklch(0.760 0.170 42);
 
   /* Opt this version into the accent for every interactive/active state.
      Body content still uses the neutral text tokens + --font-body. */

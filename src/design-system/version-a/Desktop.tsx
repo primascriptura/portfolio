@@ -19,6 +19,7 @@ import {
   DESKTOP_FILES,
   DEFAULT_LAYOUT,
   INITIAL_OPEN,
+  AUTO_OPEN_MIN_WIDTH,
   PROFILE,
   PLAYGROUND,
   featuredWork,
@@ -224,6 +225,30 @@ export function Desktop() {
 
   const moveWindow = useCallback((id: WindowId, x: number, y: number) => {
     setPositions((p) => ({ ...p, [id]: { x, y } }));
+  }, []);
+
+  // Desktop-only: auto-open Selected Work once so the canvas reads as an
+  // active desktop on first load. Gated + ref-guarded so it fires exactly
+  // once and never re-opens a window the visitor deliberately closed.
+  const autoOpenedRef = useRef(false);
+  useEffect(() => {
+    const mql = window.matchMedia(`(min-width: ${AUTO_OPEN_MIN_WIDTH}px)`);
+    const tryAutoOpen = () => {
+      if (autoOpenedRef.current || !mql.matches) return;
+      autoOpenedRef.current = true;
+      setOpenOrder((order) => (order.includes('work') ? order : [...order, 'work']));
+    };
+    tryAutoOpen(); // covers the common case: already desktop-wide at mount
+    // Belt-and-suspenders on the resize signal: some browsers/embedders
+    // don't fire a MediaQueryList 'change' event for viewport metrics that
+    // resolve after mount (e.g. a devtools/emulator override applied a
+    // tick late), but 'resize' reliably follows any layout width change.
+    mql.addEventListener('change', tryAutoOpen);
+    window.addEventListener('resize', tryAutoOpen);
+    return () => {
+      mql.removeEventListener('change', tryAutoOpen);
+      window.removeEventListener('resize', tryAutoOpen);
+    };
   }, []);
 
   // Esc closes the front-most window.

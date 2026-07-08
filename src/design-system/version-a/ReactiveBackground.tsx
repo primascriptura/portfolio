@@ -11,12 +11,14 @@ import styles from './ReactiveBackground.module.css';
      smooth falloff
    - prefers-reduced-motion → one static frame, no loop, no cursor tracking. */
 
-const CELL = 18; // px grid pitch — coarse enough to stay cheap on mid hardware
+const CELL = 16; // px grid pitch — coarse enough to stay cheap on mid hardware
 const RAMP = ' .·:-+*coxX#'; // sparse → dense
 const RADIUS = 190; // cursor influence radius, px
-const DRAW_THRESHOLD = 0.14; // skip near-empty cells (keeps glyph count down)
-const BASE_ALPHA = 0.16; // idle texture ceiling
-const CURSOR_ALPHA = 0.5; // brightest a cell gets under the cursor
+const DRAW_THRESHOLD = 0.1; // skip near-empty cells (keeps glyph count down)
+const BASE_ALPHA = 0.3; // idle texture ceiling — Version A is dark-only now,
+// tuned against that one background instead of splitting the difference
+// with a light theme, where this read as barely-there.
+const CURSOR_ALPHA = 0.62; // brightest a cell gets under the cursor
 const ACCENT_EVERY = 23; // sparse accent specks, deterministic (no RNG)
 
 function parseRGB(value: string): [number, number, number] {
@@ -97,7 +99,7 @@ export function ReactiveBackground() {
             0.25 * Math.sin(x * 0.021 + y * 0.014 + t) +
             0.25 * Math.sin(x * 0.011 - y * 0.026 - t * 0.7);
 
-          let v = base * 0.55; // idle field stays faint
+          let v = base * 0.7; // idle field — visible texture, not a flicker
 
           if (hasCursor) {
             const dx = x - px;

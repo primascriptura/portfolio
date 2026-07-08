@@ -1,6 +1,8 @@
 /* Persistent full-width chrome — orientation layer of the desktop OS.
    Sticky (not fixed) so the placeholder /a subpages flow beneath it while
-   the home canvas sizes itself to the remaining viewport. */
+   the home canvas sizes itself to the remaining viewport. Flat, not glass:
+   a solid panel with a hairline edge, matching the rest of this version's
+   OS chrome (no blur, no drop shadow anywhere in Version A). */
 .bar {
   position: sticky;
   top: 0;
@@ -12,10 +14,8 @@
   height: var(--topbar-h);
   padding: 0 var(--space-4);
 
-  background: var(--color-glass-bg);
+  background: var(--color-bg-elevated);
   border-bottom: 1px solid var(--color-border);
-  backdrop-filter: blur(var(--blur-glass));
-  -webkit-backdrop-filter: blur(var(--blur-glass));
 }
 
 .brand {

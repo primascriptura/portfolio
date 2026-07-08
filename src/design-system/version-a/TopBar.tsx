@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ThemeToggle } from '@/design-system/components';
 import { PROFILE } from './desktop-content';
 import styles from './TopBar.module.css';
 
@@ -72,7 +71,6 @@ export function TopBar() {
 
       <div className={styles.utilities}>
         <Clock />
-        <ThemeToggle />
       </div>
     </header>
   );
